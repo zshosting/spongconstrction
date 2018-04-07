@@ -1,3 +1,36 @@
+function $(expr, con) {
+	return typeof expr === 'string'? (con || document).querySelector(expr) : expr;
+}
+
+function $$(expr, con) {
+	return Array.prototype.slice.call((con || document).querySelectorAll(expr));
+}
+
+function xhr(o) {
+	var xhr = new XMLHttpRequest(o.src);
+	
+	xhr.open("GET", o.src);
+	
+	xhr.onreadystatechange = function () {
+		if (xhr.readyState == 4) {
+			if (xhr.status < 400) {
+				try {
+					o.onsuccess.call(xhr);
+				}
+				catch (e) {
+					o.onerror.call(xhr);
+					console.error(e);
+				}
+			}
+			else {
+				o.onerror.call(xhr);
+			}
+		}
+	};
+	
+	xhr.send();
+}
+
 (function(){
 
 document.body.className = 'redirecting';
@@ -22,7 +55,7 @@ xhr({
 		}
 	},
 	onerror: function () {
-		document.body.className = 'error json';
+		//document.body.className = 'error json';
 	}
 });
 
